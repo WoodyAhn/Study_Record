@@ -5,4 +5,3 @@ Study_Record
 - School: 학교 공부
 - Individual: 개인 공부
 - etc: 기타 등등
-- 

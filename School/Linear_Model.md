@@ -1,6 +1,6 @@
 # Assginment
 ----
-과제: sample size __n__ 과 standard deviation __s__ 의 변화에 따른 __변수선택__ 의 정확도 모델간 비교
+과제: sample size ###### __n__ 과 standard deviation ###### __s__ 의 변화에 따른 ###### __변수선택__ 의 정확도 모델간 비교
 
 모델: LSE/OLSE/LASSO/RIDGE/SCAD1/SCAD2/Forward/Backward
 

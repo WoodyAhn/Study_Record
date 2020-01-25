@@ -4,7 +4,7 @@
 - 방법론: tree ensemble
 - 방식: Unsupervised Learning
 
-'''R
-library(solitude)
+'''python
+import numpy as np
 print("hello world")
 '''

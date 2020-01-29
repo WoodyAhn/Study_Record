@@ -1,15 +1,13 @@
 ---
-title: "AR1"
-author: "Jay"
-date: '2020 1 27 '
 output: rmarkdown::github_document
-editor_options: 
-  chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="##", fig.retina=2, fig.path = "README_figs/README-")
 ```
+
 ### Prerequisites
 ```{r}
 library(CVTuningCov); library(orcutt);library(astsa); library(car)

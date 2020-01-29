@@ -1,0 +1,104 @@
+# Generalized Regression Analysis
+## AR1 Model coefficient Estimation
+
+목적: 1차 자기상관이 있는 AR1 모형에서 BLUE 성질을 만족하는 추정량인 $\hat{\beta}_{GLS}$ 값을 추정한다
+
+### Process
+- Generate auto-correlated Data
+- Fit OLS => get $\hat{y}$ & residual
+- plotting residual for figuring out an auto-correlation
+- Modelling residual $r_{i}$ as a function of $r_{i-1}$ => get $\hat{\rho}$
+- Generate V matrix which is a Variance-Covariance matrix for AR1 Model
+- Calcuate $\hat{\beta}_{GLS}$ 
+
+
+### Prerequisites
+```{r}
+library(CVTuningCov); library(orcutt);library(astsa); library(car)
+```
+
+### Generate auto-correlated Data
+```{r}
+y.vec = c(349.7,353.5,359.2,366.4,376.5,385.7,391.3,398.9,404.2,414.0,423.4,430.5,
+          440.4,451.8,457.0,460.9,462.9,443.4,445.0,449.0)
+x.vec = c(133.6,135.4,137.6,140.0,143.8,147.1,148.8,151.4,153.3,156.5,160.8,163.6,
+          166.9,171.4,174.0,175.4,180.5,184.9,187.1,188.7)
+```
+### Fit OLS
+```{r}
+fit = lm(y.vec ~ x.vec)
+summary(fit)
+```
+### Plotting Residuals
+```{r}
+fit_residual = fit$residuals
+plot(fit_residual)
+```
+
+### Durbin Watson Test
+```{r}
+DWT = durbinWatsonTest(fit)
+DWT
+
+P_DWT = durbinWatsonTest(fit, alternative = "positive")
+P_DWT
+```
+
+### Estimate $\hat{\rho}$
+
+```{r}
+r_ii = fit_residual[1:19]
+r_i = fit_residual[2:20]
+
+fit2 = lm(r_i ~ r_ii-1)
+rho_hat = coef(fit2)
+rho_hat
+```
+
+### Get $\hat{V}$
+
+```{r}
+V_hat = AR1(p=20, rho=rho_hat)
+V_hat[1:6,1:6]
+V_hat = 1/(1-rho_hat^2)*V_hat
+```
+
+### Estimate $\hat{\beta}_{GLS}$
+
+```{r}
+
+x.mat = cbind(1,x.vec)
+V_inverse = solve(V_hat)
+# V_inverse = 1/(1-rho_hat^2)*solve(V_hat)
+
+coef_AR = solve(t(x.mat)%*%V_inverse%*%x.mat)%*%t(x.mat)%*%V_inverse%*%y.vec
+
+coef_AR
+```
+### Cross Checking
+
+$T^{-1}y = T^{-1}X\beta$
+
+```{r}
+Lamb = diag(eigen(V_hat)$values)
+C = eigen(V_hat)$vectors
+
+all(round(head(C%*%Lamb%*%t(C)),5) == round(head(V_hat),5))
+
+
+T.mat = C%*%Lamb^(1/2) 
+T_inverse = solve(T.mat)
+
+T_y.vec = T_inverse%*%y.vec
+T_x.mat = T_inverse%*%x.mat
+
+fit_AR = lm(T_y.vec ~ T_x.mat-1)
+summary(fit_AR)
+
+
+```
+
+```{r}
+plot(fit_AR$residuals)
+```
+

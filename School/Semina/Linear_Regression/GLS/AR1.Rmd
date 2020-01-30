@@ -111,4 +111,3 @@ summary(fit_AR)
 ```{r}
 plot(fit_AR$residuals)
 ```
-

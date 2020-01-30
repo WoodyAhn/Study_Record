@@ -54,6 +54,7 @@ summary(fit)
 ### Plotting Residuals
 
 ``` r
+<<<<<<< HEAD
 fit_residual = fit$residuals
 plot(fit_residual)
 ```
@@ -172,6 +173,10 @@ summary(fit_AR)
 
 ``` r
 plot(fit_AR$residuals)
+=======
+fit_residual = fit<img src="/School/Semina/Linear_Regression/GLS/tex/624c2299c1fb6d9a3a3ea384d748ba14.svg?invert_in_darkmode&sanitize=true" align=middle width=708.09078945pt height=355.0684929pt/>\\hat{\\rho}<img src="/School/Semina/Linear_Regression/GLS/tex/6566a166b2bca88cb2e064c7efc5a95c.svg?invert_in_darkmode&sanitize=true" align=middle width=421.81469054999997pt height=118.35616319999997pt/>\\hat{V}<img src="/School/Semina/Linear_Regression/GLS/tex/158056989016a3033e446a47319e5e4c.svg?invert_in_darkmode&sanitize=true" align=middle width=3291.07125435pt height=118.35616319999997pt/>\\hat{\\beta\_{GLS}}<img src="/School/Semina/Linear_Regression/GLS/tex/dd75d71d8c190113747ad64c10391ff8.svg?invert_in_darkmode&sanitize=true" align=middle width=633.8576705999999pt height=284.3835621pt/>values)
+C = eigen(V_hat)<img src="/School/Semina/Linear_Regression/GLS/tex/ce8a2aaf4f52ff910fed796bce99ef95.svg?invert_in_darkmode&sanitize=true" align=middle width=853.9337993999999pt height=402.73972860000003pt/>residuals)
+>>>>>>> 9d9bd281d824ad5dc559e857af25f65b2f2d1f87
 ```
 
 <img src="README_figs/README-unnamed-chunk-13-1.png" width="672" />

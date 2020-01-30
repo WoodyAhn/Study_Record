@@ -1,5 +1,7 @@
 ---
 output: rmarkdown::github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -23,8 +25,12 @@ x.vec = c(133.6,135.4,137.6,140.0,143.8,147.1,148.8,151.4,153.3,156.5,160.8,163.
 ### Fit OLS
 ```{r}
 fit = lm(y.vec ~ x.vec)
+```
+
+```{r}
 summary(fit)
 ```
+
 ### Plotting Residuals
 ```{r}
 fit_residual = fit$residuals
@@ -34,12 +40,20 @@ plot(fit_residual)
 ### Durbin Watson Test
 ```{r}
 DWT = durbinWatsonTest(fit)
-DWT
 
+DWT
+```
+
+```{r}
 P_DWT = durbinWatsonTest(fit, alternative = "positive")
+
 P_DWT
 ```
-### Estimate $\hat{\rho}$
+
+### Estimate 
+
+$\hat{\rho}$
+
 ```{r}
 r_ii = fit_residual[1:19]
 r_i = fit_residual[2:20]
@@ -48,13 +62,19 @@ fit2 = lm(r_i ~ r_ii-1)
 rho_hat = coef(fit2)
 rho_hat
 ```
-### Get $\hat{V}$
+### Get 
+
+$\hat{V}$
+
 ```{r}
 V_hat = AR1(p=20, rho=rho_hat)
 V_hat[1:6,1:6]
 V_hat = 1/(1-rho_hat^2)*V_hat
 ```
-### Estimate $\hat{\beta}_{GLS}$
+### Estimate 
+
+$\hat{\beta_{GLS}}$
+
 ```{r}
 
 x.mat = cbind(1,x.vec)

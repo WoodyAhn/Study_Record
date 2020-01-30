@@ -27,6 +27,9 @@ x.vec = c(133.6,135.4,137.6,140.0,143.8,147.1,148.8,151.4,153.3,156.5,160.8,163.
 
 ``` r
 fit = lm(y.vec ~ x.vec)
+```
+
+``` r
 summary(fit)
 ## 
 ## Call:
@@ -55,25 +58,31 @@ fit_residual = fit$residuals
 plot(fit_residual)
 ```
 
-<img src="README_figs/README-unnamed-chunk-5-1.png" width="672" />
+<img src="README_figs/README-unnamed-chunk-6-1.png" width="672" />
 
 ### Durbin Watson Test
 
 ``` r
 DWT = durbinWatsonTest(fit)
+
 DWT
 ##  lag Autocorrelation D-W Statistic p-value
 ##    1       0.7461337      0.312374       0
 ##  Alternative hypothesis: rho != 0
+```
 
+``` r
 P_DWT = durbinWatsonTest(fit, alternative = "positive")
+
 P_DWT
 ##  lag Autocorrelation D-W Statistic p-value
 ##    1       0.7461337      0.312374       0
 ##  Alternative hypothesis: rho > 0
 ```
 
-### Estimate $\\hat{\\rho}$
+### Estimate
+
+$\\hat{\\rho}$
 
 ``` r
 r_ii = fit_residual[1:19]
@@ -86,7 +95,9 @@ rho_hat
 ## 0.891002
 ```
 
-### Get $\\hat{V}$
+### Get
+
+$\\hat{V}$
 
 ``` r
 V_hat = AR1(p=20, rho=rho_hat)
@@ -101,7 +112,9 @@ V_hat[1:6,1:6]
 V_hat = 1/(1-rho_hat^2)*V_hat
 ```
 
-### Estimate $\\hat{\\beta}\_{GLS}$
+### Estimate
+
+$\\hat{\\beta\_{GLS}}$
 
 ``` r
 
@@ -161,4 +174,4 @@ summary(fit_AR)
 plot(fit_AR$residuals)
 ```
 
-<img src="README_figs/README-unnamed-chunk-11-1.png" width="672" />
+<img src="README_figs/README-unnamed-chunk-13-1.png" width="672" />

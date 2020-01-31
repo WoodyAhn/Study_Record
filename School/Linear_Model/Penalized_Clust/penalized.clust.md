@@ -9,8 +9,13 @@ library(mvtnorm); library(plsgenomics); library(ggplot2)
 
     ## C++ based sparse PLS routines will soon be available on the CRAN in the new 'fastPLS' package.
 
+<<<<<<< HEAD
 1 Gaussian mixture model (multivariate ver)
 ===========================================
+=======
+1. Gaussian mixture model (multivariate ver)
+============================================
+>>>>>>> b22033d35cb5fa5a3c54034911011aa298a58abe
 
 1) R code
 ---------

@@ -14,7 +14,9 @@ library(mvtnorm); library(plsgenomics); library(ggplot2)
 ```
 
 
+
 # 1 Gaussian mixture model (multivariate ver)
+=======
 
 
 ## 1) R code

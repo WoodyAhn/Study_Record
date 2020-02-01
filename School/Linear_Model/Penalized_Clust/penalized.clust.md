@@ -14,7 +14,6 @@ library(mvtnorm); library(plsgenomics); library(ggplot2)
 ---
 
 ### 1) R code
----------
 
 ``` r
 em.multiv.ex2.input.k=function(data,iter.max=1000,k=2,seed=1,show.iter=F,eps=1e-15) {
@@ -71,14 +70,12 @@ em.multiv.ex2.input.k=function(data,iter.max=1000,k=2,seed=1,show.iter=F,eps=1e-
 ```
 
 ### 2) Running
-----------
 
 ``` r
 clust.iris=em.multiv.ex2.input.k(as.matrix(iris[,c(1,4)]),iter.max=10000,eps=1e-11,k=3,seed=2)
 ```
 
 ### 3) Results
-----------
 
 #### (1) classification table
 
@@ -106,7 +103,6 @@ ggplot(clust.iris.plot,aes(Sepal.Length,Petal.Width,col=as.factor(class)))+geom_
 ---
 
 ### 1) R code
----------
 
 ``` r
 em.lasso.ex2.input.k2=function(data,iter.max=1000,k=4,lam,seed=1,eps=1e-15) {
@@ -176,7 +172,6 @@ em.lasso.ex2.input.k2=function(data,iter.max=1000,k=4,lam,seed=1,eps=1e-15) {
 ```
 
 ### 2) analysis : Leukemia data
----------------------------
 
 ``` r
 library(plsgenomics)

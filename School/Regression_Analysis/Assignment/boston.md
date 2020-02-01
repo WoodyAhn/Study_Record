@@ -182,8 +182,7 @@ hist(log(bs_df$CMEDV))
 
 ![](boston_files/figure-markdown_github/unnamed-chunk-5-6.png)
 
-fit2 종속변수 변환(log)
-=======================
+### fit2 종속변수 변환(log)
 
 ``` r
 fit2 =lm(log(CMEDV) ~ TOWNNO + TRACT + LON + LAT + CRIM + ZN +
@@ -244,8 +243,7 @@ vif(fit2)
     ##     AGE     DIS     RAD     TAX PTRATIO       B   LSTAT 
     ##    3.36    4.88   12.30    9.85    2.11    1.36    2.97
 
-다중공선성 문제 해결 TRACT 제거
-===============================
+### 다중공선성 문제 해결 TRACT 제거
 
 ``` r
 fit3 = lm(log(CMEDV) ~ TOWNNO  + LON + LAT + CRIM + ZN +
@@ -314,8 +312,7 @@ vif(fit3)
     ##     DIS     RAD     TAX PTRATIO       B   LSTAT 
     ##    4.85    8.07    9.84    2.00    1.36    2.97
 
-Backward TOWNNO, LAT, INDUS, AGE 제거
-=====================================
+### Backward TOWNNO, LAT, INDUS, AGE 제거
 
 ``` r
 fit4 = back.fit = stepAIC(fit3,direction = "backward")
@@ -483,8 +480,7 @@ plot(fit4)
 
 ![](boston_files/figure-markdown_github/unnamed-chunk-8-1.png)![](boston_files/figure-markdown_github/unnamed-chunk-8-2.png)![](boston_files/figure-markdown_github/unnamed-chunk-8-3.png)![](boston_files/figure-markdown_github/unnamed-chunk-8-4.png)
 
-LON 제거 by ANOVA
-=================
+### LON 제거 by ANOVA
 
 ``` r
 fit5 = lm(log(CMEDV) ~ CRIM + ZN + CHAS + NOX + RM + 
@@ -603,8 +599,7 @@ plot(fit6)
 
 ![](boston_files/figure-markdown_github/unnamed-chunk-10-1.png)![](boston_files/figure-markdown_github/unnamed-chunk-10-2.png)![](boston_files/figure-markdown_github/unnamed-chunk-10-3.png)![](boston_files/figure-markdown_github/unnamed-chunk-10-4.png)
 
-Outlier Test
-============
+### Outlier Test
 
 ``` r
 outliers = outlierTest(fit6)
@@ -628,8 +623,7 @@ out.obs=as.numeric(row.names(out.df))
 out_bs_df = bs_df[-c(out.obs),]
 ```
 
-fit7
-====
+### fit7
 
 ``` r
 out_fit7 = lm(log(CMEDV) ~  CRIM +CHAS +ZN+ log(NOX) + RM  + log(DIS) + 

@@ -1,0 +1,113 @@
+---
+title: "Concrete"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Prerequisites
+```{r}
+rm(list=ls()); library(gdata); library(corrplot); library(ggplot2); library(DataExplorer); library(car); library(MASS); library(caret)
+options("scipen"=100, "digits"=3)
+```
+
+### Read Data
+```{r}
+con.df = read.xls("data/Concrete.xls")
+colnames(con.df) = c("Cement", "Blast", "Flyash", "Water", "Superpla", "CoarseAgg", "FineAgg", "Age", "strength")
+```
+
+### EDA
+```{r}
+plot_histogram(con.df, nrow=3L, ncol=3L)
+plot_scatterplot(con.df,geom_point_args=list(size=0.7), by="strength", 
+                 nrow=3L,ncol=3L)
+corrplot(cor(con.df))
+
+summary(con.df)
+cor(con.df)
+```
+
+
+
+## Model
+```{r}
+
+fit1 = lm(strength ~ Cement + Blast + Flyash + Water +
+            Superpla + CoarseAgg + FineAgg + Age, data=con.df)
+summary(fit1)
+plot(fit1)
+vif(fit1)
+# write.csv(t(vif_fit1), "vif_1.csv")
+hist(con.df$strength)
+hist(sqrt(con.df$strength))
+```
+
+
+
+### fit2 Delete FineAgg (다중공선성 해결)
+```{r}
+
+fit2 = lm(strength ~ Cement + Blast + Flyash + Water +
+            Superpla + CoarseAgg + Age, data=con.df)
+summary(fit2)
+vif_fit2 = vif(fit2)
+anova(fit2,fit1)
+```
+
+
+
+
+### fit3 Delete CoarseAgg (Backward)
+```{r}
+
+fit3 = stepAIC(fit2,direction="backward")
+# fit3 = lm(strength ~ Cement + Blast + Flyash + Water +
+#             Superpla + Age, data=con.df)
+summary(fit3)
+anova(fit3,fit2)
+plot(fit3)
+```
+
+### fit4 sqrt(Age) 
+```{r}
+
+fit4 = lm(strength ~ Cement + Blast + Flyash + Water +
+            Superpla + sqrt(Age), data=con.df)
+summary(fit4)
+plot(fit4)
+
+plot(con.df$Age, con.df$strength)
+plot(sqrt(con.df$Age), con.df$strength)
+
+```
+
+
+### Outlier Detection
+```{r}
+
+outliers = outlierTest(fit4)
+
+rstudent_1= outliers[[1]]
+unadjusted_p=outliers[[2]]
+Bonferroni_p=outliers[[3]]
+out.df=cbind(rstudent_1,unadjusted_p,Bonferroni_p)
+
+out.df
+
+out.obs=as.numeric(row.names(out.df))
+out_con_df = con.df[-c(out.obs),]
+```
+
+
+### fit5 Without Outlier
+```{r}
+
+fit5 = lm(strength ~ Cement + Blast + Flyash + Water + Superpla + Age, data=out_con_df)
+summary(fit5)
+plot(fit5)
+```
+
+

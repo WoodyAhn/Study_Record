@@ -1,0 +1,145 @@
+---
+title: "Boston"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Prerequisites
+```{r}
+rm(list=ls())
+
+library(corrplot); library(ggplot2); library(DataExplorer); library(car); library(MASS)
+options("scipen"=100, "digits"=3)
+```
+
+
+### Read Data
+```{r}
+boston = read.csv("data/Boston_csv.csv")
+head(boston)
+```
+
+### Data Summary(EDA)
+```{r}
+t(summary(boston[,-1])[c(1,3,4,6),])
+
+bs_df = boston[,3:dim(boston)[2]]
+bs_df = bs_df[,-5]
+
+plot_histogram(bs_df,nrow=3L,ncol=3L)
+plot_scatterplot(bs_df,geom_point_args=list(size=1L), by="CMEDV",nrow=3L,ncol=3L)
+corrplot(cor(bs_df))
+```
+
+
+### Factor 변수 변환
+```{r}
+bs_df$CHAS = factor(bs_df$CHAS)
+```
+
+
+## Model
+
+### fit1
+```{r}
+
+fit1 = lm(CMEDV ~ TOWNNO + TRACT + LON + LAT + CRIM + ZN 
+          + INDUS + CHAS + NOX + RM + AGE + DIS + RAD + 
+            TAX +PTRATIO + B + LSTAT, data=bs_df)
+summary(fit1)
+plot(fit1)
+hist(bs_df$CMEDV)
+hist(log(bs_df$CMEDV))
+```
+
+
+# fit2 종속변수 변환(log) 
+```{r}
+fit2 =lm(log(CMEDV) ~ TOWNNO + TRACT + LON + LAT + CRIM + ZN +
+           INDUS + CHAS + NOX + RM + AGE + DIS + RAD + TAX +
+           PTRATIO + B + LSTAT, data=bs_df)
+summary(fit2)
+plot(fit2)
+vif(fit2)
+```
+
+
+
+# 다중공선성 문제 해결 TRACT  제거
+```{r}
+
+fit3 = lm(log(CMEDV) ~ TOWNNO  + LON + LAT + CRIM + ZN +
+            INDUS + CHAS + NOX + RM + AGE + DIS + 
+            RAD + TAX +PTRATIO + B + LSTAT,
+          data=bs_df )
+summary(fit3)
+plot(fit3)
+anova(fit3,fit2)[,1:6]
+vif(fit3)
+```
+
+
+# Backward TOWNNO, LAT, INDUS, AGE 제거
+```{r}
+fit4 = back.fit = stepAIC(fit3,direction = "backward")
+fit4 = lm(log(CMEDV) ~ LON + CRIM + ZN + CHAS + NOX + RM + 
+            DIS + RAD + TAX + PTRATIO + B + LSTAT, data = bs_df)
+summary(fit4)
+anova(fit4,fit3)
+plot(fit4)
+```
+
+
+
+
+# LON 제거 by ANOVA
+```{r}
+fit5 = lm(log(CMEDV) ~ CRIM + ZN + CHAS + NOX + RM + 
+            DIS + RAD + TAX + PTRATIO + B + LSTAT, data = bs_df)
+summary(fit5)
+anova(fit4,fit5)
+plot(fit5)
+```
+
+
+
+# 변수변환 log(LSTAT), log(DIS), log(NOX)
+```{r}
+fit6 = lm(log(CMEDV) ~ CRIM + ZN + CHAS + log(NOX) + RM + 
+            log(DIS) + RAD + TAX + PTRATIO + B + log(LSTAT), data = bs_df)
+summary(fit6)
+anova(fit6,fit5)
+plot(fit6)
+```
+
+
+
+# Outlier Test
+```{r}
+
+outliers = outlierTest(fit6)
+
+rstudent_1= outliers[[1]]
+unadjusted_p=outliers[[2]]
+Bonferroni_p=outliers[[3]]
+out.df=cbind(rstudent_1,unadjusted_p,Bonferroni_p)
+out.df
+
+out.obs=as.numeric(row.names(out.df))
+out_bs_df = bs_df[-c(out.obs),]
+```
+
+
+# fit7
+```{r}
+
+out_fit7 = lm(log(CMEDV) ~  CRIM +CHAS +ZN+ log(NOX) + RM  + log(DIS) + 
+                log(RAD)  +PTRATIO + B + log(LSTAT),
+              data=out_bs_df )
+fs = summary(out_fit7)
+fs
+plot(out_fit7)
+```
+

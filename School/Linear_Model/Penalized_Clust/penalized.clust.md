@@ -11,9 +11,9 @@ library(mvtnorm); library(plsgenomics); library(ggplot2)
 
 
 # 1 Gaussian mixture model (multivariate ver)
-==============================================
+---
 
-1) R code
+### 1) R code
 ---------
 
 ``` r
@@ -70,17 +70,17 @@ em.multiv.ex2.input.k=function(data,iter.max=1000,k=2,seed=1,show.iter=F,eps=1e-
 }
 ```
 
-2) Running
+### 2) Running
 ----------
 
 ``` r
 clust.iris=em.multiv.ex2.input.k(as.matrix(iris[,c(1,4)]),iter.max=10000,eps=1e-11,k=3,seed=2)
 ```
 
-3) Results
+### 3) Results
 ----------
 
-### (1) classification table
+#### (1) classification table
 
 ``` r
 table(pred=clust.iris$class,act=iris$Species)
@@ -92,7 +92,7 @@ table(pred=clust.iris$class,act=iris$Species)
     ##    2     49          0         0
     ##    3      1         49         4
 
-### (2) plotting
+#### (2) plotting
 
 ``` r
 library(ggplot2)
@@ -102,10 +102,10 @@ ggplot(clust.iris.plot,aes(Sepal.Length,Petal.Width,col=as.factor(class)))+geom_
 
 ![](penalized.clust_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
-2. Penalized model-based clustering
-===================================
+# 2 Penalized model-based clustering
+---
 
-1) R code
+### 1) R code
 ---------
 
 ``` r
@@ -175,7 +175,7 @@ em.lasso.ex2.input.k2=function(data,iter.max=1000,k=4,lam,seed=1,eps=1e-15) {
 }
 ```
 
-2) analysis : Leukemia data
+### 2) analysis : Leukemia data
 ---------------------------
 
 ``` r
@@ -201,7 +201,7 @@ pen.clust.rst=em.lasso.ex2.input.k2(data=scale(leukemia$X[,1:100],center=T,scale
     ## [1] "iteration: 12 / -5145.76739460155"
     ## [1] "iteration: 13 / -5145.78750608309"
 
-### (1) loglikelihood
+#### (1) loglikelihood
 
 ``` r
 ggplot(pen.clust.rst$like,aes(iter,likelihood))+geom_line(size=1.3,alpha=0.3)+
@@ -211,7 +211,7 @@ ggplot(pen.clust.rst$like,aes(iter,likelihood))+geom_line(size=1.3,alpha=0.3)+
 
 ![](penalized.clust_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
-### (2) Variable selection
+#### (2) Variable selection
 
 ``` r
 pen.clust.rst
@@ -393,7 +393,7 @@ drop(leukemia$gene.names[1:100,3])[select.ind]
     ## [85] "D14661_at"                   "D14662_at"                  
     ## [87] "D14663_at"                   "D14686_at"
 
-### (3) Clustering result : classification table
+#### (3) Clustering result : classification table
 
 ``` r
 table(pred=pen.clust.rst$class,act=leukemia$Y)

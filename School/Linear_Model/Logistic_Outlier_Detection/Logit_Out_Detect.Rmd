@@ -1,8 +1,7 @@
 ---
 title: "Logit_Out_Detect"
 output: github_document
-editor_options: 
-  chunk_output_type: console
+
 ---
 
 ```{r setup, include=FALSE}
@@ -220,6 +219,7 @@ out.result=logis.outlier.func(y.vec,x.mat,z.mat,grp.index,lambda=8,iter.max=1000
 plot(out.result$like,type="o",main="penalized loss function")
 out.result$del.hat
 ```
+
 - Check Accuracy
 ```{r}
 tr_del = del.vec!=0
@@ -235,6 +235,10 @@ sum(acc.vec)/length(acc.vec)
 
 
 #### tuning \lambda
+=======
+
+- tuning \lambda
+>>>>>>> 4582a9ce1453d32d244e3af80a46b4036703a899
 ```{r}
 res.list=data.frame(lambda=NA,bic=NA)
 lamb.set=seq(8,20,0.5)
@@ -263,6 +267,7 @@ out.result$del.hat
 
 out.result$del.hat==0
 ```
+
 
 - Check Accuracy
 ```{r}

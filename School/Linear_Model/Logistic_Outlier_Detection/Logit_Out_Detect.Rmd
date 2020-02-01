@@ -235,10 +235,9 @@ sum(acc.vec)/length(acc.vec)
 
 
 #### tuning \lambda
-=======
+---
 
 - tuning \lambda
->>>>>>> 4582a9ce1453d32d244e3af80a46b4036703a899
 ```{r}
 res.list=data.frame(lambda=NA,bic=NA)
 lamb.set=seq(8,20,0.5)

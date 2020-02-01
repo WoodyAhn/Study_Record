@@ -1,8 +1,6 @@
 ---
 title: "Penalized_Model-Based_Clustering"
 output: github_document
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -14,21 +12,8 @@ library(mvtnorm); library(plsgenomics); library(ggplot2)
 ```
 
 
-<<<<<<< HEAD
 
 # 1 Gaussian mixture model (multivariate ver)
-=======
-=======
-<<<<<<< HEAD
-# 1 Gaussian mixture model (multivariate ver)
-=======
-<<<<<<< HEAD
-# 1 Gaussian mixture model (multivariate ver)
-=======
-# 1. Gaussian mixture model (multivariate ver)
->>>>>>> b22033d35cb5fa5a3c54034911011aa298a58abe
->>>>>>> cafdfccece3d21031c4582fc61d033d2bfe60710
->>>>>>> e30529af1e84cae31de1a6b5eaffb42c970588c3
 
 
 ## 1) R code

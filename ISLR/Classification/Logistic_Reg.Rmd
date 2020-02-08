@@ -2,7 +2,11 @@
 title: "Logistic_Regression"
 author: "Jay"
 date: '2020 2 8 '
+<<<<<<< HEAD
 output: github_document
+=======
+output: html_document
+>>>>>>> 4d33df3fc565065aaa375ab40f811b7f3a557a20
 ---
 
 - Response가 qualitative일 때 Logistic Regression Model을 적합해본다.

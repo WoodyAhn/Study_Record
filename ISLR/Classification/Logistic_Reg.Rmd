@@ -1,0 +1,103 @@
+---
+title: "Logistic_Regression"
+author: "Jay"
+date: '2020 2 8 '
+output: github_document
+---
+
+- Response가 qualitative일 때 Logistic Regression Model을 적합해본다.
+- Train - Test set을 나눠 예측력을 확인한다.
+- 사용한 데이터는 "ILSR" 패키지의 "Smarket"데이터. S&P500 주가 시계열 데이터이다
+- 과거 주가 이용해 주가가 오를지 내릴지 여부(Direction) 예측
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+rm(list=ls())
+library(ISLR); library(corrplot); library(ggplot2)
+
+```
+### Data Glance
+```{r}
+Smarket = ISLR::Smarket
+names(Smarket)
+dim(Smarket)
+head(Smarket)
+summary(Smarket)
+
+corrplot(cor(Smarket[,-9]))
+attach(Smarket)
+```
+### Logistic Regression fitting
+```{r}
+glm_fit =glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume , 
+             data=Smarket, family=binomial)
+summary(glm_fit)
+contrasts(Direction)
+```
+#### fitting된 Model의 예측 확률값 도출
+type="response" argument로 logit 값이 아닌 확률값 산출 
+```{r}
+glm_probs = predict(glm_fit, type="response")
+glm_probs[1:10]
+
+```
+#### 확률값 기준으로 Response(Direction) 예측
+Accuracy 측정
+```{r}
+glm_pred = rep("Down",nrow(Smarket))
+glm_pred[glm_probs>0.5] = "UP"
+
+glm_tab = table(glm_pred, Direction)
+glm_tab
+sum(diag(glm_tab))/sum(glm_tab)
+mean(glm_pred==Direction)
+```
+# Train - Test Split
+```{r}
+train = (Year<2005)
+Smarket_2005 = Smarket[!train,]
+dim(Smarket_2005)
+Direction_2005 = Direction[!train]
+```
+### Logistic Regression fitting 
+```{r}
+glm_tr_fit = glm(Direction ~ Lag1+Lag2+Lag3+Lag4+Lag5+Volume,
+                 data=Smarket, family=binomial, subset=train)
+summary(glm_tr_fit)
+
+```
+#### 학습된 Model로 Test-set 예측 & Accuracy 확인
+```{r}
+glm_ts_probs = predict(glm_tr_fit, Smarket_2005, type="response")
+
+glm_ts_pred = rep("Down",252)
+glm_ts_pred[glm_ts_probs>0.5] = "Up"
+glm_ts_tab = table(glm_ts_pred, Direction_2005)
+sum(diag(glm_ts_tab))/sum(glm_ts_tab)
+
+mean(glm_ts_pred==Direction_2005)
+mean(glm_ts_pred!=Direction_2005)
+```
+#### 변수선택(according to P-value) 후 Logistic Model fitting & Accuracy 확인
+```{r}
+glm_fit = glm(Direction~Lag1+Lag2,
+              data=Smarket, family=binomial, subset=train)
+glm_probs = predict(glm_fit, Smarket_2005, type="response")
+glm_pred = rep("Down",252)
+glm_pred[glm_probs>0.5]="Up"
+glm_tab = table(glm_pred,Direction_2005)
+glm_tab
+sum(diag(glm_tab))/sum(glm_tab)
+mean(glm_pred==Direction_2005)
+
+mean(glm_pred!=Direction_2005)
+
+```
+#### New data 예측할 시 Example
+```{r}
+predict(glm_fit, newdata=data.frame(Lag1=c(1.2,1.5),Lag2=c(1.1,-0.8)),type='response')
+```
+

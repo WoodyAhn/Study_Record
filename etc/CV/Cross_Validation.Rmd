@@ -1,0 +1,135 @@
+---
+title: "Cross Validation"
+author: "Jay"
+date: '2020 2 11 '
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Import Libraries
+```{r}
+rm(list=ls())
+library(caret); library(rpart); library(dplyr); library(rpart.plot)
+```
+### Data Generation
+```{r}
+n = 1000; p = 100
+set.seed(2019)
+x.mat = matrix(rnorm(n*p),n,p)
+b.vec = 1/(1:p)
+y.vec = exp(x.mat%*%b.vec)/(1+exp(x.mat%*%b.vec))
+y.vec = (y.vec>0.5)+0
+data = data.frame(y.vec,x.mat)
+data$y.vec = as.factor(data$y.vec)
+```
+### Train-Test Split
+```{r}
+
+set.seed(2019)
+id=createDataPartition(data$y.vec,p=0.7,list=FALSE)
+train = data[id,]
+test = data[-id,]
+```
+### Prediction Without Validation
+```{r}
+tree = rpart(y.vec~.,data=train)
+pred = predict(tree,test,type="class")
+tab = table(test$y.vec,pred)
+acc = sum(diag(tab))/sum(tab)
+acc
+```
+# Validation
+
+### Train(pt)-Validation Split
+```{r}
+set.seed(2019)
+pt.id = createDataPartition(train$y.vec,p=0.7,list=FALSE)
+pt.train = train[pt.id,]
+pt.val = train[-pt.id,]
+```
+### Make dataframes for Grid search and saving results
+```{r}
+tree.grid = expand.grid(cp=c(0.01,0.1,1), maxdepth=c(4,6,10))
+perf.tree = data.frame(acc = rep(0,nrow(tree.grid)))
+```
+### Grid Search Algoritm runs
+```{r}
+for (i in 1:nrow(perf.tree)){
+  pt.tree = rpart(y.vec~.,data=pt.train,
+                  control=rpart.control(cp=tree.grid[i,"cp"],
+                  maxdepth=tree.grid[i,"maxdepth"]))
+  pt.pred = predict(pt.tree,pt.val,type="class")
+  pt.tab = table(pt.val$y.vec,pt.pred)
+  acc = sum(diag(pt.tab))/sum(pt.tab)
+  perf.tree[i,] = acc
+}
+```
+### Get optimal values for tuning parameter based on Validation acc
+```{r}
+final.perf.tree = cbind(tree.grid,perf.tree)
+final.perf.tree
+
+q = which.max(final.perf.tree[,"acc"])
+opt = final.perf.tree[q,]
+opt
+```
+### Prediction(Test-set) with optimal tuning parameter obtained by Validation
+```{r}
+tree = rpart(y.vec ~ ., data=train, control = rpart.control(cp=opt$cp,maxdepth=opt$maxdepth))
+pred = predict(tree,test,type="class")
+tab = table(test$y.vec,pred)
+acc = sum(diag(tab)) / sum(tab)
+acc
+```
+
+# Cross Validation
+
+### Create Folds(5)
+```{r}
+n.fold = 5
+set.seed(2019)
+fold.id = createFolds(train$y.vec,k=n.fold,returnTrain=FALSE)
+```
+### Make dataframes for Grid search & saving results
+```{r}
+tree.grid = expand.grid(cp=c(0.01,0.1,1), maxdepth=c(4,6,10))
+perf.cv.tree = data.frame(acc = rep(0,nrow(tree.grid)))
+```
+### CV & Grid search Algorithm runs
+```{r}
+for (j in 1:nrow(perf.cv.tree)){
+  cv.err.vec = NULL
+  for (i in 1:n.fold){
+    tree = rpart(y.vec ~ ., data=train[-fold.id[[i]],], 
+                 control = rpart.control(cp=tree.grid[j,"cp"],maxdepth = tree.grid[j,"maxdepth"]))
+    pred = predict(tree, train[fold.id[[i]],],type="class")
+    tab = table(train$y.vec[fold.id[[i]]], pred)
+    acc = sum(diag(tab)) / sum(tab)
+    cv.err.vec = c(cv.err.vec, acc)
+  }
+  perf.cv.tree[j,1] = mean(cv.err.vec)
+}
+```
+### Get optimal values for tuning parameter based on CV acc
+```{r}
+final.perf.cv.tree = cbind(tree.grid, perf.cv.tree)
+final.perf.cv.tree
+
+q = which.max(final.perf.cv.tree[,"acc"])
+opt = final.perf.tree[q,]
+opt
+```
+### Prediction(Test-set) with optimal tuning parameter obtained by CV
+```{r}
+tree = rpart(y.vec ~ ., data=train, control = rpart.control(cp=opt$cp,maxdepth=opt$maxdepth))
+pred = predict(tree,test,type="class")
+tab = table(test$y.vec,pred)
+acc = sum(diag(tab)) / sum(tab)
+```
+
+```{r}
+
+```
+
